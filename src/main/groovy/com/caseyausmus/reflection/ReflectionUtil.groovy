@@ -169,7 +169,7 @@ class ReflectionUtil {
      * @return All fields that are annotated with the given annotation class
      */
     static List<Field> getFieldsForAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
-        return getFields(clazz, [], false).findAll { it.isAnnotationPresent(annotationClass) }
+        return getFields(clazz, false).findAll { it.isAnnotationPresent(annotationClass) }
     }
 
     static Method getDeclaredMethod(Class<?> clazz, String methodName) throws NoSuchMethodException {
@@ -177,22 +177,12 @@ class ReflectionUtil {
             return clazz.getDeclaredMethod(methodName)
         }
         catch (NoSuchMethodException e) {
-            if (clazz.superclass != Object) {
+            if (clazz.superclass) {
                 return getDeclaredMethod(clazz.superclass, methodName)
             } else {
                 throw e
             }
         }
-    }
-
-    /**
-     * Retrieve all fields from a class
-     *
-     * @param clazz Class to reflect over
-     * @return All fields in a class
-     */
-    static List<Field> getFields(Class<?> clazz) {
-        return getFields(clazz, []);
     }
 
     /**
@@ -212,19 +202,17 @@ class ReflectionUtil {
      * @param fields List of Field objects
      * @return All fields in a class
      */
-    static List<Field> getFields(Class<?> clazz, List<Field> fields) {
-        return getFields(clazz, fields, true)
+    static List<Field> getFields(Class<?> clazz) {
+        return getFields(clazz, true)
     }
 
-    static List<Field> getFields(Class<?> clazz, List<Field> fields, boolean includeBaseClasses) {
-        fields.addAll(clazz.declaredFields.toList())
+    static List<Field> getFields(Class<?> clazz, boolean includeBaseClasses) {
+        List<Field> fields = clazz.declaredFields.toList().findAll { !it.isSynthetic() }
 
-        if (!includeBaseClasses) {
-            return fields
-        } else if (clazz.superclass) {
-            return getFields(clazz.superclass, fields, true);
-        } else {
-            return fields
+        if(includeBaseClasses && clazz.superclass) {
+            fields.addAll(getFields(clazz.superclass, true));
         }
+
+        return fields
     }
 }
