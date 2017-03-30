@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+jar {
+    baseName = 'reflection-util'
+    version =  '0.0.1'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.5'
+    compile 'org.apache.commons:commons-lang3:3.0'
+    testCompile 'junit:junit:4.12'
+}
