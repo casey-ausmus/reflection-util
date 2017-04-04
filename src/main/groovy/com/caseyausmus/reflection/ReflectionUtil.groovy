@@ -59,11 +59,10 @@ class ReflectionUtil {
         Field field = null
         Class<?> lastClass = clazz
 
-        String[] fieldTokens = fieldName.tokenize('.')
-
-        for (String fieldToken : fieldTokens) {
+        for (String fieldToken : fieldName.tokenize('.')) {
             try {
                 field = lastClass.getDeclaredField(fieldToken)
+                lastClass = field.type
             }
             catch (NoSuchFieldException e) {
                 if (clazz.superclass) {
@@ -72,8 +71,6 @@ class ReflectionUtil {
                     throw e
                 }
             }
-
-            lastClass = field.type
         }
 
         return field
@@ -191,7 +188,7 @@ class ReflectionUtil {
      * @param clazz Class to reflect over
      * @return All non-static fields in a class
      */
-    static List<Field> getFieldsWithoutStatics(Class<?> clazz) {
+    static List<Field> getNonStaticFields(Class<?> clazz) {
         return getFields(clazz).findAll { !Modifier.isStatic(it.modifiers) }
     }
 

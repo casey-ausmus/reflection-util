@@ -275,7 +275,7 @@ class ReflectionUtilTest {
 	
 	@Test
 	void testGetFieldsWithoutStatics() {
-		List<Field> fields = ReflectionUtil.getFieldsWithoutStatics(ObjectWithStatics)
+		List<Field> fields = ReflectionUtil.getNonStaticFields(ObjectWithStatics)
 		assert 2 == fields.size()
 	}
 	
@@ -311,5 +311,12 @@ class ReflectionUtilTest {
 		//Test string-based method
 		List<Field> fields = ReflectionUtil.getFieldsOfType('com.caseyausmus.reflection.testClasses.Parent', 'java.lang.String')
 		assert fields.size() == 4
+	}
+
+	@Test
+	void testGetFields() {
+		assert ReflectionUtil.getFields(Parent).size() == 7
+		assert ReflectionUtil.getFields(Child).size() == 3
+		assert ReflectionUtil.getFields(Grandchild).size() == 2
 	}
 }
