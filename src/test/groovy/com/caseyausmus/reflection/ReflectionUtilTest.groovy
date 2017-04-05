@@ -10,6 +10,8 @@ import java.lang.reflect.Method
 import com.caseyausmus.reflection.testClasses.*
 import org.junit.Test
 
+import java.lang.reflect.Modifier
+
 class ReflectionUtilTest {
 
 	@Test
@@ -318,5 +320,13 @@ class ReflectionUtilTest {
 		assert ReflectionUtil.getFields(Parent).size() == 7
 		assert ReflectionUtil.getFields(Child).size() == 3
 		assert ReflectionUtil.getFields(Grandchild).size() == 2
+	}
+
+	@Test
+	void testGetFieldsWithClosure() {
+		// Test getting just static fields
+		assert ReflectionUtil.getFields(Parent) { Field field -> Modifier.isStatic(field.modifiers) }.size() == 2
+		// Test getting just strings
+		assert ReflectionUtil.getFields(Parent) { it.type == String }.size() == 4
 	}
 }
