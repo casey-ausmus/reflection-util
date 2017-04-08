@@ -57,22 +57,12 @@ class ReflectionUtil {
      */
     static Field getField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
         Field field = null
-        Class<?> lastClass = clazz
-
-        for (String fieldToken : fieldName.tokenize('.')) {
-            try {
-                field = lastClass.getDeclaredField(fieldToken)
-                lastClass = field.type
-            }
-            catch (NoSuchFieldException e) {
-                if (clazz.superclass) {
-                    field = getField(lastClass.superclass, fieldToken)
-                } else {
-                    throw e
-                }
-            }
+        fieldName.tokenize('.').inject(clazz) { Class<?> c, String token ->
+            field = c.declaredFields.find { it.name == token }
+            if (!field && c.superclass) field = getField(c.superclass, token)
+            if (!field) throw new NoSuchFieldException()
+            field.type
         }
-
         return field
     }
 
